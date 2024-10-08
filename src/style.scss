@@ -1,7 +1,0 @@
-#smart-player {
-  width: min(100%, calc(100vh * 1.7777));
-
-  &[data-ar="9:16"] {
-    width: min(100%, calc(100vh / 1.7777));
-  }
-}
