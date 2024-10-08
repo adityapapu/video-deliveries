@@ -1,5 +1,5 @@
 import { execSync } from 'child_process';
-import { resolve, basename, dirname } from 'path';
+import { resolve, basename } from 'path';
 import { readdirSync, statSync, mkdirSync, renameSync, existsSync, rmSync } from 'fs';
 
 // Recursively get all HTML files in the "customers" directory
@@ -21,9 +21,21 @@ function getCustomerPages(dirPath, basePath = '') {
   return pages;
 }
 
+// Get the specific target (directory or page) to build, if provided
+const targetPage = process.argv[2];
 const customerPages = getCustomerPages(resolve(process.cwd(), 'customers'));
 
-customerPages.forEach(page => {
+// Filter pages based on the target page, if specified
+const pagesToBuild = targetPage
+  ? customerPages.filter(page => page.name.startsWith(targetPage.replace(/\/$/, '')))
+  : customerPages;
+
+if (pagesToBuild.length === 0) {
+  console.error(`Error: No pages found for the specified target "${targetPage}".`);
+  process.exit(1);
+}
+
+pagesToBuild.forEach(page => {
   const outputDir = resolve('dist', page.name);
   const outputFileName = basename(page.path); // Should be 'index.html'
 
